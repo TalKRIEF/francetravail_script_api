@@ -26,7 +26,7 @@ response =
       {"x-dtpc", "8$63833798_894h10vCRPRLTOBTVOVGNBNTTLRQGQKMBRHKUTH-0e0"}
     ],
     params: [
-      {"max", "5"}
+      {"max", "150"}
     ],
     hackney: [
       cookie: [
@@ -35,14 +35,16 @@ response =
     ]
   )
 
-_data = Jason.decode!(response.body)
-IO.inspect(response)
+data = Jason.decode!(response.body)
 
-# Enum.each(data, fn promise ->
-#   IO.puts("#{promise["title"]}")
-#   IO.puts("#{promise["location"]}")
-#   IO.puts("#{promise["company"]}")
-#   IO.puts("__________________________________")
-#   IO.puts("**********************************")
-#   IO.puts("__________________________________")
-# end)
+filtered_data = Enum.filter(data, fn job -> job["codeDepartment"] in ["83", "13"] end)
+
+Enum.each(filtered_data, fn promise ->
+  IO.puts("#{promise["title"]}")
+  IO.puts("#{promise["location"]}")
+  IO.puts("#{promise["company"]}")
+
+  IO.puts(
+    "________________________________________________________________________________________________________"
+  )
+end)

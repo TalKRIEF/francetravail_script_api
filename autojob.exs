@@ -35,16 +35,24 @@ response =
     ]
   )
 
-data = Jason.decode!(response.body)
+_filtered_data =
+  response.body
+  |> Jason.decode!()
+  |> Enum.filter(fn job -> job["codeDepartment"] in ["83", "13"] end)
+  |> Enum.each(fn offer ->
+    IO.puts("""
+    #{offer["title"]}
+    #{offer["location"]}
+    #{offer["company"]}
+    """)
+  end)
 
-filtered_data = Enum.filter(data, fn job -> job["codeDepartment"] in ["83", "13"] end)
+# Enum.each(filtered_data, fn promise ->
+#   IO.puts("#{promise["title"]}")
+#   IO.puts("#{promise["location"]}")
+#   IO.puts("#{promise["company"]}")
 
-Enum.each(filtered_data, fn promise ->
-  IO.puts("#{promise["title"]}")
-  IO.puts("#{promise["location"]}")
-  IO.puts("#{promise["company"]}")
-
-  IO.puts(
-    "________________________________________________________________________________________________________"
-  )
-end)
+#   IO.puts(
+#     "_______________________________________________________________________________________________________"
+#   )
+# end)

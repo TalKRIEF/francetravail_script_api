@@ -4,12 +4,12 @@ Mix.install([
 ])
 
 defmodule Offers do
-  def find_offers(department) do
-    url = "https://candidat.francetravail.fr/gw-metierscope/job/M1855/offers"
+  @url "https://candidat.francetravail.fr/gw-metierscope/job/M1855/offers"
 
+  def find_offers(department) do
     response =
       HTTPoison.get!(
-        url,
+        @url,
         [
           {"Referer",
            "https://candidat.francetravail.fr/metierscope/fiche-metier/M1855/developpeur-developpeuse-web"}
@@ -20,30 +20,32 @@ defmodule Offers do
         ]
       )
 
-    data =
-      response.body
-      |> Jason.decode!()
-      |> Enum.filter(fn job -> job["codeDepartment"] in [department] end)
-      |> Enum.sort_by(
-        fn job ->
-          {:ok, datetime} = NaiveDateTime.from_iso8601(job["creationDate"])
-          datetime
-        end,
-        {:desc, NaiveDateTime}
-      )
-
-    Enum.each(data, fn offer ->
-      IO.puts("""
-      ********* #{offer["creationDate"]} #{offer["title"]} **********
-      #{offer["location"]}
-      #{offer["company"]}
-      _______________________________________________________________________________
-      """)
-    end)
-
-    data
+    response.body
+    |> Jason.decode!()
+    |> Enum.filter(fn job -> job["codeDepartment"] in [department] end)
   end
 end
 
-Offers.find_offers("13")
-Offers.find_offers("83")
+department_list = ["13", "83"]
+
+mixed_results =
+  department_list
+  |> Enum.flat_map(fn dpt ->
+    Offers.find_offers(dpt)
+  end)
+  |> Enum.sort_by(
+    fn job ->
+      {:ok, datetime} = NaiveDateTime.from_iso8601(job["creationDate"])
+      datetime
+    end,
+    {:asc, NaiveDateTime}
+  )
+
+Enum.each(mixed_results, fn offer ->
+  IO.puts("""
+  ********* #{offer["creationDate"]} #{offer["title"]} **********
+  #{offer["location"]}
+  #{offer["company"]}
+  _______________________________________________________________________________
+  """)
+end)

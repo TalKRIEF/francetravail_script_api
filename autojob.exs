@@ -27,11 +27,16 @@ defmodule Offers do
 end
 
 department_list = ["13", "83"]
+keywords_to_include = ["angular", "react", "ruby", "rails", "elixir", "phoenix"]
 
 mixed_results =
   department_list
   |> Enum.flat_map(fn dpt ->
     Offers.find_offers(dpt)
+  end)
+  |> Enum.filter(fn job ->
+    downcased = String.downcase(job["title"])
+    Enum.any?(keywords_to_include, &String.contains?(downcased, &1))
   end)
   |> Enum.sort_by(
     fn job ->
@@ -49,4 +54,3 @@ Enum.each(mixed_results, fn offer ->
   _______________________________________________________________________________
   """)
 end)
-

@@ -46,8 +46,10 @@ mixed_results =
     {:asc, NaiveDateTime}
   )
 
-Enum.each(mixed_results, fn offer ->
-  IO.puts("""
+
+  Enum.each(mixed_results, fn offer ->
+    IO.puts IO.ANSI.blue()
+    IO.puts("""
   ********* #{offer["creationDate"]} #{offer["title"]} **********
   #{offer["location"]}
   #{offer["company"]}

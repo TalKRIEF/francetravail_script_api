@@ -53,7 +53,7 @@ Enum.each(mixed_results, fn offer ->
 
   IO.puts("""
   #{offer["location"]}
-  #{IO.ANSI.red()} #{offer["company"]} #{IO.ANSI.reset()}
+  #{IO.ANSI.green_background()} #{offer["company"]} #{IO.ANSI.reset()}
   _______________________________________________________________________________
   """)
 end)
